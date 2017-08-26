@@ -1,0 +1,55 @@
+version: '3.1'
+services:
+
+  database:
+    image: mariadb:latest
+    restart: always
+    container_name: %MARIADB_CONTNAME%
+    networks:
+      - development_network
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: devdb
+      MYSQL_PASSWORD: devdb
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - %MARIADB_PORT%:3306
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: %PHPMYADMIN_CONTNAME%
+    networks:
+      - development_network
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: root
+      PMA_HOST: %MARIADB_CONTNAME%
+    ports:
+      - %PHPMYADMIN_PORT%:80
+
+  web:
+    image: nginx:latest
+    container_name: %WEBSERVER_CONTNAME%
+    restart: always
+    ports:
+      - %WEBSERVER_PORT%:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ../:/var/www/html/public
+    networks:
+      - development_network
+    depends_on:
+      - php
+      - database
+
+  php:
+    build: .
+    container_name: %PHP_CONTNAME%
+    networks:
+      - development_network
+    volumes:
+      - ../:/var/www/html/public
+      - ./php.ini:/usr/local/etc/php/php.ini
+
+networks:
+  development_network:
