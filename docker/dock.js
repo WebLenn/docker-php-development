@@ -38,13 +38,13 @@ program
     console.log(warning('Remember docker containers may not have the same NAME as existing containers.\nUse "docker ps -a" to see the existing container names.'));
 
     co(function *() {
-      var mariadb_contname = yield prompt('mariadb container_name: ');
-      var phpmyadmin_contname = yield prompt('phpmyadmin container_name: ');
-      var webserver_contname = yield prompt('webserver container_name: ');
-      var php_contname = yield prompt('php container_name: ');
-      var webserver_port = yield prompt('webserver port: ');
-      var mariadb_port = yield prompt('mariadb port: ');
-      var phpmyadmin_port = yield prompt('phpmyadmin port: ');
+      var mariadb_contname = (yield prompt('mariadb container_name: default(mariadb)')) || 'mariadb';
+      var phpmyadmin_contname = (yield prompt('phpmyadmin container_name: default(phpmyadmin)')) || 'phpmyadmin';
+      var webserver_contname = (yield prompt('webserver container_name: default(webserver)')) || 'webserver';
+      var php_contname = (yield prompt('php container_name: default(php)')) || 'php';
+      var webserver_port = (yield prompt('webserver port: default(8080)')) || '8080';
+      var mariadb_port = (yield prompt('mariadb port: default(8989)')) || '8989';
+      var phpmyadmin_port = (yield prompt('phpmyadmin port: default(8181)')) || '8181';
 
       shell.sed('-i', '%MARIADB_CONTNAME%', mariadb_contname, dockcompose_file);
       shell.sed('-i', '%MARIADB_CONTNAME%', mariadb_contname, './docker/sql_container.txt');
