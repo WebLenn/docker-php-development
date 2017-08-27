@@ -33,6 +33,7 @@ program
   // ----------------------------------------------
   if (program.init){
     shell.cp('-R', globalPath, '.');
+    shell.rm('./docker/dock.js');
     console.log(success('./docker folder successfully created, time to name your containers!'));
     console.log(warning('Remember docker containers may not have the same NAME as existing containers.\nUse "docker ps -a" to see the existing container names.'));
 
