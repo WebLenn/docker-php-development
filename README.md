@@ -46,7 +46,7 @@ Use `dock -h` or `dock --help` to see all possible commands.
 
 To start a local development environment use `dock -i` in your project root.
 
-This will add a new folder into your project `./docker` this folder will hold the configuration files for your dock.
+This will add a new folder into your project, `./docker` this folder will hold the configuration files for your dock.
 
 The init option will also ask you to name your containers and assign port numbers to them.
 
@@ -96,4 +96,8 @@ The `./docker/nginx.conf` contains the nginx config, the basic configuration is 
 The `./docker/docker-compose.yml` contains the docker-compose config, on `dock --start` this file gets read and will be used to start the containers.
 Edit this file to change your ports, database_username or database_password
 
+---
+
 In Projects where you need to use the Database use your MariaDB Container name as the hostname, docker will use the name to lookup the ip:port.
+
+![hostname example](https://webverder.nl/dock/dock-hostname.png "hostname example")
