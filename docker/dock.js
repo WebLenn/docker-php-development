@@ -16,7 +16,9 @@ program
   .option('-e, --stop', 'Stop the dock')
   .option('-q, --stopall', 'Stop all running docks')
   .option('-a, --showall', 'Show all existing docks')
-  .option('-f, --foreground', 'Start dock on foreground')=
+  .option('-f, --foreground', 'Start dock on foreground')
+  .option('-d, --dbdump', 'Dumps the database into a database.sql file in projectroot')
+  .option('-r, --dbrestore', 'Retores the database dump in projectroot folder')
   .option('-l, --logs', 'Show logs')
   .parse(process.argv);
 
@@ -32,9 +34,15 @@ program
     var globalPath = shell.exec('yarn global dir', {silent:true}).stdout.trim()+'/node_modules/docker-php-development/docker/';
   };
 
-  // Get project folder path and folder name
+  // Get project folder path
   var projectFolder = shell.pwd().stdout;
-  var projectName   = projectFolder.substr(projectFolder.lastIndexOf('\\') + 1);
+
+  // Set projectname
+  if( projectFolder.match(/\\/g) ){
+    var projectName = projectFolder.substr(projectFolder.lastIndexOf('\\') + 1);
+  } else {
+    var projectName = projectFolder.substr(projectFolder.lastIndexOf('/') + 1);
+  }
 
   // Init function
   // Will create a "docker" folder in your projectfolder.
@@ -102,7 +110,7 @@ program
         shell.exec('docker stop '+containerList[i], {silent:true});
       }
     }
-    console.log(success('Succesfully stopped all running docks'));
+    console.log(success('Successfully stopped all running docks'));
   }
 
   // Show all container names function
@@ -121,22 +129,41 @@ program
   // DBDump function
   // Manualy create/overwrite the database.sql file with the new data.
   // -----------------------------------
-  // if( program.dbdump ){
-  //   // The database container_name, is used for exporting/importing the database.
-  //   var db_container_name = shell.tail({'-n': 1}, './docker/sql_container.txt');
-  //
-  //   shell.exec('docker exec '+ projectName +'_database sh -c \"exec mysqldump --all-databases -uroot -proot\" > database.sql');
-  // }
-  //
-  // // DBRestore function
-  // // Restore the database using the database.sql file.
-  // // -----------------------------------
-  // if( program.dbrestore ){
-  //   // The database container_name, is used for exporting/importing the database.
-  //   var db_container_name = shell.tail({'-n': 1}, './docker/sql_container.txt');
-  //
-  //   shell.exec('docker exec -i '+ db_container_name +' sh -c \"exec mysql -uroot -proot\" < database.sql');
-  // }
+  if( program.dbdump ){
+    // Go to docker folder
+    shell.cd('./docker');
+
+    // The database container_name, is used for exporting/importing the database.
+    var db_container_id = shell.exec('docker-compose ps -q database', {silent:true}).stdout.trim();
+
+    // Go back to project folder
+    shell.cd('../');
+
+    // Executing DB dump
+    shell.exec('docker exec '+ db_container_id +' sh -c "exec mysqldump --all-databases -uroot -proot" > database.sql');
+    console.log( success('Your database has been dumped Successfully, run dock -r or --dbrestore to restore the database.') );
+  }
+
+  // DBRestore function
+  // Restore the database using the database.sql file.
+  // -----------------------------------
+  if( program.dbrestore ){
+    // Go to docker folder
+    shell.cd('./docker');
+
+    // The database container_id, is used for exporting/importing the database.
+    var db_container_id         = shell.exec('docker-compose ps -q database', {silent:true}).stdout.trim();
+    var phpmyadmin_container_id = shell.exec('docker-compose ps -q phpmyadmin', {silent:true}).stdout.trim();
+    var phpmyadmin_port         = shell.exec('docker port ' + phpmyadmin_container_id, {silent:true}).stdout.trim();
+        phpmyadmin_port         = phpmyadmin_port.substr(phpmyadmin_port.lastIndexOf(':'));
+
+    // Go back to project folder
+    shell.cd('../');
+
+    // Executing DB import
+    shell.exec('docker exec -i '+ db_container_id +' sh -c \"exec mysql -uroot -proot\" < database.sql');
+    console.log( success('Your database has been restored Successfully, to view your database visit phpMyAdmin ( http://localhost' + phpmyadmin_port + ' )') );
+  }
 
   // Logs function
   // Output the logs to the bash, same output as Start_Foreground function.
