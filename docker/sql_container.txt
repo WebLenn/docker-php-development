@@ -1,2 +1,0 @@
-// This file is used by dock.js to know which container needs to be exported/imported
-%MARIADB_CONTNAME%

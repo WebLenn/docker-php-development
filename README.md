@@ -34,6 +34,8 @@ Use `dock -h` or `dock --help` to see all possible commands.
 -i, --init        Install the dock into your project
 -s, --start       Start the dock
 -e, --stop        Stop the dock
+-q, --stopall     Stop all running docks
+-a, --showall     Show all existing docks
 -f, --foreground  Start dock on foreground
 -d, --dbdump      Dumps the database into a database.sql file in projectroot
 -r, --dbrestore   Retores the database dump in projectroot folder
@@ -52,7 +54,7 @@ The init option will also ask you to name your containers and assign port number
 
 > **Note:** Make sure the container names are unique otherwise docker won't be able to start them.
 
-![init command example](https://webverder.nl/dock/dock_commands.gif "Init command example")
+![init command example](https://webverder.nl/dock/dock_commands2.gif "Init command example")
 
 #### Start the dock:
 
@@ -70,12 +72,6 @@ Go to localhost:`YourPhpMyAdminPort` to view the database, login with `root/root
 
 To stop the dock use `dock -e` or `dock --stop` this will stop the docker containers.
 
-On the stop command the dock will dump the database into a database.sql file, and place this file in the root of your project.
-
-> **Note:** This database.sql file won't automatically get restored on a `dock --start`, when the containers are stopped they still contain all your data so we won't need to restore the database, but if somehow your container gets destroyed it's nice to have the latest database file.
-
->This can also be usefull for cloning your project, to restore the database simply run `dock -r` or `dock --dbrestore`.
-
 #### Output logs to the shell:
 
 To output logs use `dock -l` or `dock --logs` this will continuesly output the logs from the containers.
@@ -83,21 +79,28 @@ To output logs use `dock -l` or `dock --logs` this will continuesly output the l
 
 > **Note:** This can also be achieved with the `dock --foreground` command, this will start the containers and directly output the logs.
 
+#### Dump DB:
+
+To dump the database use `dock -d` or `dock --dbdump` this will dump the database to the root of your project.
+
+> **Note:** This database.sql file won't automatically get restored on a `dock --start`, when the containers are stopped they still contain all your data so we won't need to restore the database, but if somehow your container gets destroyed it's nice to have the latest database file.
+
+>This can also be usefull for cloning your project, to restore the database simply run `dock -r` or `dock --dbrestore`.
 
 
 ## Additional info
 
 The `docker` folder in your project root holds all the files to edit the configuration, to change php.ini values simply go to the `./docker/php.ini` file and add any overwrite you need.
 
-The `./docker/Dockerfile` contains the PHP-FPM config, it'll use the original latest php:7.1-fpm image and install some additional packages using apt-get, docker-php-ext & pecl.
+The `./docker/Dockerfile` contains the PHP-FPM config, it'll use the original latest php:7-fpm image and install some additional packages using apt-get, docker-php-ext & pecl.
 
-The `./docker/nginx.conf` contains the nginx config, the basic configuration is probarbly enough for most PHP projects but you can change this anyway you'd like.
+The `./docker/nginx.conf` contains the nginx config, the basic configuration is probably enough for most PHP projects but you can change this anyway you'd like.
 
 The `./docker/docker-compose.yml` contains the docker-compose config, on `dock --start` this file gets read and will be used to start the containers.
 Edit this file to change your ports, database_username or database_password
 
 ---
 
-In Projects where you need to use the Database use your MariaDB Container name as the hostname, docker will use the name to lookup the ip:port.
+In Projects where you need to use the Database use keyword "database" as the hostname, docker will use the name to lookup the ip:port.
 
-![hostname example](https://webverder.nl/dock/dock-hostname.png "hostname example")
+![hostname example](https://webverder.nl/dock/dock-hostname2.png "hostname example")
