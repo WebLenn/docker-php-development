@@ -38,6 +38,7 @@ program
   var projectFolder = shell.pwd().stdout;
 
   // Set projectname
+  // Match backslash for windows, if not used assume forward slashes ( unix )
   if( projectFolder.match(/\\/g) ){
     var projectName = projectFolder.substr(projectFolder.lastIndexOf('\\') + 1);
   } else {
