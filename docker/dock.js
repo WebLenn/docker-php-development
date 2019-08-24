@@ -5,7 +5,7 @@ var chalk   = require('chalk');
 var program = require('commander');
 var shell   = require('shelljs');
 
-//Custom log colors
+// Custom log colors
 const success = chalk.green;
 const error   = chalk.bold.red;
 const warning = chalk.keyword('orange');
