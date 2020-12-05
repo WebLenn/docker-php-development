@@ -13,8 +13,9 @@ RUN apt-get update && apt-get upgrade -y \
     libsasl2-dev \
     zlib1g-dev \
     libzip-dev \
-    && docker-php-ext-install -j$(nproc) bz2 iconv mbstring pdo_mysql mysqli pgsql pdo_pgsql zip \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    libonig-dev \
+    && docker-php-ext-install -j$(nproc) bz2 iconv pdo_mysql mysqli pgsql pdo_pgsql zip \
+    && docker-php-ext-configure gd \
     && docker-php-ext-install -j$(nproc) gd
 
 # Install xdebug
