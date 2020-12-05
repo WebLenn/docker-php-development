@@ -1,6 +1,6 @@
 {
   "name": "docker-php-development",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "Nginx, PHP-FPM, PHPMyAdmin & MariaDB Docker development environment",
   "author": "Lennart van Ballegoij",
   "license": "MIT",
